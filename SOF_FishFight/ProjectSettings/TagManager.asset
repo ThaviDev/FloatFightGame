@@ -7,11 +7,12 @@ TagManager:
   - Hazard
   - Floor
   - Game Area
+  - Prop
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Ground
   - Water
   - UI
   - 
