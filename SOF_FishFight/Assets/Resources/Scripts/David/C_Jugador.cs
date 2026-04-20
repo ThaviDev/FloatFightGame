@@ -1,17 +1,57 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System;
 
 public class C_Jugador : MonoBehaviour
 {
     private PlayerInput m_PlayerInput;
     private InputAction m_MoveInput;
+    private InputAction m_GoUpInput;
+    private InputAction m_GoDownInput;
+    private InputAction m_AtkFastInput;
+    private InputAction m_AtkStrongInput;
 
     private Rigidbody m_rb;
+    [SerializeField] LayerMask m_PlayerLayerMask;
+    GameObject m_Visual;
     //private Vector2 m_MoveDir2DRaw;
-    private Vector2 m_MoveDir;
+    private Vector3 m_MoveDir;
+    [Header("Movement Settings")]
     [SerializeField] float m_MoveMaxSpeed;
     [SerializeField] float m_MoveAccel;
     [SerializeField] float m_MoveDecel;
+    [Header("Attack Settings")]
+    [SerializeField] Vector3 m_ColOffset;
+
+    [SerializeField] float m_AtkFastDamage;
+    [SerializeField] float m_AtkFastRange;
+    [SerializeField] float m_AtkFastSetCooldown;
+    public float AtkFastSetCooldown { get { return m_AtkFastSetCooldown; } }
+    private float m_AtkFastCooldown;
+    public float AtkFastCooldown { get { return m_AtkFastCooldown; } }
+
+    [SerializeField] float m_AtkStrongDamage;
+    [SerializeField] float m_AtkStrongRange;
+    [SerializeField] float m_AtkStrongSetCooldown;
+    public float AtkStrongSetCooldown { get { return m_AtkStrongSetCooldown; } }
+    private float m_AtkStrongCooldown;
+    public float AtkStrongCooldown { get { return m_AtkStrongCooldown; } }
+
+    [Header("Health Settings")]
+    [SerializeField] float m_MaxHealth = 20f;
+    private float m_CurrentHealth;
+    // IVONNE!, accede a la vida actual con CurrentHealth
+    public float CurrentHealth { get { return m_CurrentHealth; } }
+    private int m_Lives = 3;
+    // IVONNE!, accede a las vidas del jugador con Lives
+    public int Lives { get { return m_Lives; } }
+    [Header("Respawn Settings")]
+    [SerializeField] float m_RespawnDuration = 2f;
+    float m_CurrentRespawnTime = 0;
+    [SerializeField] Transform m_RespawnPoint;
+    private bool m_IsDead;
+
     private void Awake()
     {
         m_PlayerInput = GetComponent<PlayerInput>();
@@ -20,6 +60,11 @@ public class C_Jugador : MonoBehaviour
     private void OnEnable()
     {
         m_MoveInput = m_PlayerInput.actions["Move"];
+        m_GoUpInput = m_PlayerInput.actions["GoUp"];
+        m_GoDownInput = m_PlayerInput.actions["GoDown"];
+        m_AtkFastInput = m_PlayerInput.actions["AttackFast"];
+        m_AtkStrongInput = m_PlayerInput.actions["AttackStrong"];
+
         //jumpInput.performed += OnJump() *EJEMPLO DE SUSCRIPCION DE EVENTO*
     }
     private void OnDisable()
@@ -28,13 +73,140 @@ public class C_Jugador : MonoBehaviour
     }
     void Start()
     {
+        m_CurrentHealth = m_MaxHealth;
+        m_Visual = this.gameObject.transform.GetChild(0).gameObject;
         m_rb = GetComponent<Rigidbody>();
+        m_RespawnPoint = FindAnyObjectByType<RespawnPoint>().transform;
+        if (m_PlayerLayerMask == 0)
+        {
+            m_PlayerLayerMask = LayerMask.GetMask("Player");
+        }
     }
 
     void Update()
     {
-        m_MoveDir = m_MoveInput.ReadValue<Vector2>();
+        if (m_CurrentRespawnTime > 0)
+        {
+            m_CurrentRespawnTime -= Time.deltaTime;
+            if (m_CurrentRespawnTime <= 0)
+            {
+                Respawn();
+            }
+        }
+        if (m_IsDead)
+        {
+            return;
+        }
+        Vector2 m_HorMovement = m_MoveInput.ReadValue<Vector2>();
+        //Vector2 m_VertMovement = new Vector2 (Convert.ToInt32(m_JumpInput.ReadValue<bool>()), Convert.ToInt32(m_CrouchInput.ReadValue<bool>()));
+        //print("Jump" + m_GoUpInput.ReadValue<float>());
+        //print("Crouch" + m_GoDownInput.ReadValue<float>());
+        float m_VertMovement = m_GoUpInput.ReadValue<float>() - m_GoDownInput.ReadValue<float>();
+        //print("MovimientoVertical" + m_VertMovement);
+        //m_MoveDir = m_MoveInput.ReadValue<Vector2>();
+        m_MoveDir = new Vector3(m_HorMovement.x, m_VertMovement, m_HorMovement.y);
 
+        if (m_AtkFastInput.ReadValue<float>() > 0)
+        {
+            FastAttack();
+        }
+        if (m_AtkStrongInput.ReadValue<float>() > 0)
+        {
+            StrongAttack();
+        }
+
+        if (m_AtkFastCooldown > 0)
+        {
+            m_AtkFastCooldown -= Time.deltaTime;
+        }
+        if (m_AtkStrongCooldown > 0)
+        {
+            m_AtkStrongCooldown -= Time.deltaTime;
+        }
+    }
+    private void FastAttack()
+    {
+        //ARAMIS: Efecto de ataque rápido
+        if (m_AtkFastCooldown <= 0)
+        {
+            print("Fast Attack!");
+            Vector3 center = transform.position + m_ColOffset;
+            Collider[] hit = Physics.OverlapBox(center, new Vector3(m_AtkFastRange, m_AtkFastRange, m_AtkFastRange), Quaternion.identity, m_PlayerLayerMask);
+            if (hit.Length > 0)
+            {
+                foreach (var h in hit)
+                {
+                    if (h.gameObject != this.gameObject.transform.GetChild(0).gameObject)
+                    {
+                        print("Attacked: " + h.gameObject.name);
+                        h.gameObject.transform.parent.GetComponent<C_Jugador>()?.RecieveDamage(m_AtkFastDamage);
+                    }
+                }
+            }
+            m_AtkFastCooldown = m_AtkFastSetCooldown;
+        }
+    }
+    private void StrongAttack()
+    {
+        //ARAMIS: Efecto de ataque fuerte
+        if (m_AtkStrongCooldown <= 0)
+        {
+            print("Strong Attack!");
+            Vector3 center = transform.position + m_ColOffset;
+            Collider[] hit = Physics.OverlapBox(center, new Vector3(m_AtkStrongRange, m_AtkStrongRange, m_AtkStrongRange), Quaternion.identity, m_PlayerLayerMask);
+            if (hit.Length > 0)
+            {
+                foreach (var h in hit)
+                {
+                    if (h.gameObject != this.gameObject.transform.GetChild(0).gameObject)
+                    {
+                        print("Attacked: " + h.gameObject.name);
+                        h.gameObject.transform.parent.GetComponent<C_Jugador>()?.RecieveDamage(m_AtkStrongDamage);
+                    }
+                }
+            }
+            m_AtkStrongCooldown = m_AtkStrongSetCooldown;
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        // Gizmos para visualizar el rango de ataque
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position + m_ColOffset, m_AtkFastRange);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position + m_ColOffset, m_AtkStrongRange);
+    }
+
+    public void RecieveDamage(float damage)
+    {
+        //ARAMIS: Efecto de recibir danio
+        m_CurrentHealth -= damage;
+        if (m_CurrentHealth <= 0)
+        {
+            Death();
+        }
+    }
+    public void Death()
+    {
+        //ARAMIS: Efecto de muerte
+        m_Lives -= 1;
+        m_CurrentHealth = m_MaxHealth;
+        m_Visual.SetActive(false);
+        m_IsDead = true;
+        print("Player Died! Lives left: " + m_Lives);
+        if (m_Lives > 0)
+        {
+            m_CurrentRespawnTime = m_RespawnDuration;
+        }
+    }
+    public void Respawn()
+    {
+        //ARAMIS: Efecto de respawn
+        print("Player Respawned!");
+        m_IsDead = false;
+        transform.position = m_RespawnPoint.position;
+        m_Visual.SetActive(true);
     }
     private void FixedUpdate()
     {
@@ -43,7 +215,7 @@ public class C_Jugador : MonoBehaviour
 
     private void MovimientoFisico()
     {
-        if (m_MoveDir != Vector2.zero)
+        if (m_MoveDir != Vector3.zero)
         {
             m_rb.AddForce(m_MoveDir * m_MoveAccel, ForceMode.Force);
             // Limitar Velocidad Maxima
