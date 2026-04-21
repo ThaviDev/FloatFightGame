@@ -15,6 +15,11 @@ public class C_Jugador : MonoBehaviour
     private Rigidbody m_rb;
     [SerializeField] LayerMask m_PlayerLayerMask;
     GameObject m_Visual;
+
+    [Header("Character Selection")]
+    [SerializeField] int m_CharacterID;
+    //public int CharacterID { get { return m_CharacterID; } set { m_CharacterID = value; } }
+    [SerializeField] Material[] m_CharacterMaterial;
     //private Vector2 m_MoveDir2DRaw;
     private Vector3 m_MoveDir;
     [Header("Movement Settings")]
@@ -50,7 +55,8 @@ public class C_Jugador : MonoBehaviour
     [SerializeField] float m_RespawnDuration = 2f;
     float m_CurrentRespawnTime = 0;
     [SerializeField] Transform m_RespawnPoint;
-    private bool m_IsDead;
+    private bool m_CanControl;
+    public bool CanControl { get { return m_CanControl; } set { m_CanControl = value; } }
 
     private void Awake()
     {
@@ -73,6 +79,7 @@ public class C_Jugador : MonoBehaviour
     }
     void Start()
     {
+        m_CanControl = false;
         m_CurrentHealth = m_MaxHealth;
         m_Visual = this.gameObject.transform.GetChild(0).gameObject;
         m_rb = GetComponent<Rigidbody>();
@@ -93,7 +100,7 @@ public class C_Jugador : MonoBehaviour
                 Respawn();
             }
         }
-        if (m_IsDead)
+        if (!m_CanControl)
         {
             return;
         }
@@ -123,6 +130,13 @@ public class C_Jugador : MonoBehaviour
         {
             m_AtkStrongCooldown -= Time.deltaTime;
         }
+    }
+
+    // ACCEDAN A ESTA FUNCION PARA CAMBIO DE PERSONAJE
+    public void ChangeCharacter(int characterID)
+    {
+        //ARAMIS: Efecto de cambio de personaje (Pantalla de seleccion de personaje)
+        m_Visual.GetComponent<Renderer>().material = m_CharacterMaterial[characterID];
     }
     private void FastAttack()
     {
@@ -193,7 +207,7 @@ public class C_Jugador : MonoBehaviour
         m_Lives -= 1;
         m_CurrentHealth = m_MaxHealth;
         m_Visual.SetActive(false);
-        m_IsDead = true;
+        m_CanControl = true;
         print("Player Died! Lives left: " + m_Lives);
         if (m_Lives > 0)
         {
@@ -204,7 +218,7 @@ public class C_Jugador : MonoBehaviour
     {
         //ARAMIS: Efecto de respawn
         print("Player Respawned!");
-        m_IsDead = false;
+        m_CanControl = false;
         transform.position = m_RespawnPoint.position;
         m_Visual.SetActive(true);
     }
