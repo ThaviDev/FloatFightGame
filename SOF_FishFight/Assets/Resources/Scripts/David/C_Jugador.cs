@@ -1,5 +1,7 @@
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.InputSystem;
+using static UnityEngine.ParticleSystem;
 
 public class C_Jugador : MonoBehaviour
 {
@@ -55,6 +57,11 @@ public class C_Jugador : MonoBehaviour
     public bool defeated = false;
     public string nombreJugador;
     public int playerID;
+    //public AudioSource deathsound;
+    //public ParticleSystem particlesFastAttack;
+    //public ParticleSystem particlesStrongAttack;
+    //public ParticleSystem particlesDeath;
+
 
     [Header("Respawn Settings")]
     [SerializeField] float m_RespawnDuration = 2f;
@@ -66,6 +73,10 @@ public class C_Jugador : MonoBehaviour
     private void Awake()
     {
         m_PlayerInput = GetComponent<PlayerInput>();
+        //deathsound = GetComponent<AudioSource>();
+        //particlesDeath = GetComponent<ParticleSystem>();
+        //particlesFastAttack = GetComponent<ParticleSystem>();
+        //particlesStrongAttack = GetComponent<ParticleSystem>();
     }
 
     private void OnEnable()
@@ -156,25 +167,25 @@ public class C_Jugador : MonoBehaviour
 
         if (m_PlayerInput.playerIndex == 0)
         {
-            print ("Accedo a mi personaje 1");
+            print("Accedo a mi personaje 1");
             characterID = FindAnyObjectByType<C_SetCharacters>().m_p1.CharacterID;
             FindAnyObjectByType<C_BattleUIManager>().SetPlayer1UI(this);
         }
         else if (m_PlayerInput.playerIndex == 1)
         {
-            print ("Accedo a mi personaje 2");
+            print("Accedo a mi personaje 2");
             characterID = FindAnyObjectByType<C_SetCharacters>().m_p2.CharacterID;
             FindAnyObjectByType<C_BattleUIManager>().SetPlayer2UI(this);
         }
         else if (m_PlayerInput.playerIndex == 2)
         {
-            print ("Accedo a mi personaje 3");
+            print("Accedo a mi personaje 3");
             characterID = FindAnyObjectByType<C_SetCharacters>().m_p3.CharacterID;
             FindAnyObjectByType<C_BattleUIManager>().SetPlayer3UI(this);
         }
         else if (m_PlayerInput.playerIndex == 3)
         {
-            print ("Accedo a mi personaje 4");
+            print("Accedo a mi personaje 4");
             characterID = FindAnyObjectByType<C_SetCharacters>().m_p4.CharacterID;
             FindAnyObjectByType<C_BattleUIManager>().SetPlayer4UI(this);
         }
@@ -183,7 +194,7 @@ public class C_Jugador : MonoBehaviour
             characterID = 0; // Valor por defecto o error
         }
         //ARAMIS: Efecto de cambio de personaje (Pantalla de seleccion de personaje)
-        print ("Cambio de material " + characterID);
+        print("Cambio de material " + characterID);
         m_Visual.GetComponent<Renderer>().material = m_CharacterMaterial[characterID];
     }
     private void FastAttack()
@@ -194,6 +205,7 @@ public class C_Jugador : MonoBehaviour
             print("Fast Attack!");
             Vector3 center = transform.position + m_ColOffset;
             Collider[] hit = Physics.OverlapBox(center, new Vector3(m_AtkFastRange, m_AtkFastRange, m_AtkFastRange), Quaternion.identity, m_PlayerLayerMask);
+            //particlesFastAttack.Play();
             if (hit.Length > 0)
             {
                 foreach (var h in hit)
@@ -216,6 +228,7 @@ public class C_Jugador : MonoBehaviour
             print("Strong Attack!");
             Vector3 center = transform.position + m_ColOffset;
             Collider[] hit = Physics.OverlapBox(center, new Vector3(m_AtkStrongRange, m_AtkStrongRange, m_AtkStrongRange), Quaternion.identity, m_PlayerLayerMask);
+            //particlesStrongAttack.Play();
             if (hit.Length > 0)
             {
                 foreach (var h in hit)
@@ -256,6 +269,11 @@ public class C_Jugador : MonoBehaviour
             m_CanControl = false;
             // Lógica para cuando colisiona con otro jugador
         }
+        if (collision.CompareTag("Hazard"))
+        {
+            print("damage");
+            RecieveDamage(999f);
+        }
         //print("Salí de la colision con " + collision.gameObject.name);
     }
 
@@ -277,6 +295,8 @@ public class C_Jugador : MonoBehaviour
         m_Visual.SetActive(false);
         m_CanControl = false;
         print("Player Died! Lives left: " + m_Lives);
+        //particlesDeath.Play();
+        //deathsound.Play();
         if (m_Lives > 0)
         {
             m_CurrentRespawnTime = m_RespawnDuration;
