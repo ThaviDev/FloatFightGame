@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4817250641756109297}
   - component: {fileID: 4357374029153923984}
   - component: {fileID: 5264420373109303310}
-  m_Layer: 3
+  m_Layer: 6
   m_Name: P_Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -126,7 +126,7 @@ GameObject:
   - component: {fileID: 4359103763860005016}
   - component: {fileID: 5577695014056169536}
   - component: {fileID: 9030670640148623457}
-  m_Layer: 3
+  m_Layer: 6
   m_Name: P_PlayerTest1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -193,7 +193,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::C_Jugador
   m_PlayerLayerMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
+  m_CharacterID: 1
+  m_CharacterMaterial:
+  - {fileID: 2100000, guid: 990ac1d45643e7749a9c4b90277aee28, type: 2}
+  - {fileID: 2100000, guid: d1182f79d7d0a444a983396f7a0054be, type: 2}
+  - {fileID: 2100000, guid: b7ba9145cc516804eae1011b1806a7d0, type: 2}
   m_MoveMaxSpeed: 10
   m_MoveAccel: 65
   m_MoveDecel: 20
@@ -201,12 +206,12 @@ MonoBehaviour:
   m_AtkFastDamage: 1
   m_AtkFastRange: 1
   m_AtkFastSetCooldown: 0.4
-  m_AtkFastCooldown: 0
-  m_AtkStrongDamage: 3
+  m_AtkStrongDamage: 12
   m_AtkStrongRange: 2.2
-  m_AtkStrongSetCooldown: 1
-  m_AtkStrongCooldown: 0
-  m_MaxHealth: 20
+  m_AtkStrongSetCooldown: 4
+  m_MaxHealth: 100
+  m_RespawnDuration: 2
+  m_RespawnPoint: {fileID: 0}
 --- !u!54 &9030670640148623457
 Rigidbody:
   m_ObjectHideFlags: 0
