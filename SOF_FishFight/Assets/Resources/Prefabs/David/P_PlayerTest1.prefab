@@ -340,9 +340,9 @@ MonoBehaviour:
   m_AtkFastDamage: 1
   m_AtkFastRange: 1
   m_AtkFastSetCooldown: 0.4
-  m_AtkStrongDamage: 12
+  m_AtkStrongDamage: 18
   m_AtkStrongRange: 2.2
-  m_AtkStrongSetCooldown: 4
+  m_AtkStrongSetCooldown: 8
   m_MaxHealth: 100
   defeated: 0
   nombreJugador: 
