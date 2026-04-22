@@ -1174,6 +1174,7 @@ MonoBehaviour:
   - {fileID: 1290723252}
   - {fileID: 1655187892}
   readyButton: {fileID: 1436490563}
+  selectedCharacterSCOB: {fileID: 11400000, guid: 4fdea3e5266c7eb49b73b636dd3d1b1a, type: 2}
 --- !u!1 &655108632
 GameObject:
   m_ObjectHideFlags: 0
@@ -2471,6 +2472,7 @@ MonoBehaviour:
   - {fileID: 1925204952}
   - {fileID: 1166579970}
   readyButton: {fileID: 795154360}
+  selectedCharacterSCOB: {fileID: 11400000, guid: 0e62d30909e822f4ea02ebd084477a5a, type: 2}
 --- !u!1 &1166579968
 GameObject:
   m_ObjectHideFlags: 0
@@ -2828,6 +2830,7 @@ MonoBehaviour:
   - {fileID: 2094694150}
   - {fileID: 205760101}
   readyButton: {fileID: 497381894}
+  selectedCharacterSCOB: {fileID: 11400000, guid: eec8a87904d1f8447bcd84e39d193cf3, type: 2}
 --- !u!1 &1231961471
 GameObject:
   m_ObjectHideFlags: 0
@@ -4112,6 +4115,7 @@ MonoBehaviour:
   - {fileID: 1086758208}
   - {fileID: 522063696}
   readyButton: {fileID: 1017804469}
+  selectedCharacterSCOB: {fileID: 11400000, guid: 7e23f044c389bb8458e3ba60909b94cd, type: 2}
 --- !u!1 &1483429388
 GameObject:
   m_ObjectHideFlags: 0

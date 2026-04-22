@@ -1,7 +1,8 @@
+using System;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System;
+using UnityEngine.TextCore.Text;
 
 public class C_Jugador : MonoBehaviour
 {
@@ -79,6 +80,7 @@ public class C_Jugador : MonoBehaviour
     }
     void Start()
     {
+
         m_CanControl = false;
         m_CurrentHealth = m_MaxHealth;
         m_Visual = this.gameObject.transform.GetChild(0).gameObject;
@@ -133,8 +135,29 @@ public class C_Jugador : MonoBehaviour
     }
 
     // ACCEDAN A ESTA FUNCION PARA CAMBIO DE PERSONAJE
-    public void ChangeCharacter(int characterID)
+    public void ChangeCharacter()
     {
+        int characterID;
+        if (m_PlayerInput.playerIndex == 0)
+        {
+            characterID = FindAnyObjectByType<C_SetCharacters>().m_p1.CharacterID;
+        }
+        if (m_PlayerInput.playerIndex == 1)
+        {
+            characterID = FindAnyObjectByType<C_SetCharacters>().m_p2.CharacterID;
+        }
+        if (m_PlayerInput.playerIndex == 2)
+        {
+            characterID = FindAnyObjectByType<C_SetCharacters>().m_p3.CharacterID;
+        }
+        if (m_PlayerInput.playerIndex == 3)
+        {
+            characterID = FindAnyObjectByType<C_SetCharacters>().m_p4.CharacterID;
+        }
+        else
+        {
+            characterID = 0; // Valor por defecto o error
+        }
         //ARAMIS: Efecto de cambio de personaje (Pantalla de seleccion de personaje)
         m_Visual.GetComponent<Renderer>().material = m_CharacterMaterial[characterID];
     }

@@ -14,8 +14,11 @@ public class PlayerSelectPanel : MonoBehaviour
     private int selectedCharacterIndex = -1;
     private bool isReady = false;
 
+    public CharacterSelectSCOB selectedCharacterSCOB;
+
     private void Start()
     {
+        selectedCharacterSCOB.PlayerSlot = playerIndex; // Asignar el PlayerID al SCOB
         readyButton.gameObject.SetActive(false);
 
         // Asignar listeners a botones de personaje
@@ -33,6 +36,7 @@ public class PlayerSelectPanel : MonoBehaviour
         if (isReady) return;
 
         selectedCharacterIndex = index;
+        selectedCharacterSCOB.CharacterID = index; // Actualizar SCOB para mostrar selección
 
         readyButton.gameObject.SetActive(true); // <-- esto en lugar de interactable
 
