@@ -50,6 +50,12 @@ public class C_Jugador : MonoBehaviour
     private int m_Lives = 3;
     // IVONNE!, accede a las vidas del jugador con Lives
     public int Lives { get { return m_Lives; } }
+
+    // Bool de jugador eliminado-Aramis
+    public bool defeated = false;
+    public string nombreJugador;
+    public int playerID;
+
     [Header("Respawn Settings")]
     [SerializeField] float m_RespawnDuration = 2f;
     float m_CurrentRespawnTime = 0;
@@ -275,6 +281,7 @@ public class C_Jugador : MonoBehaviour
         {
             m_CurrentRespawnTime = m_RespawnDuration;
         }
+        
     }
     public void Respawn()
     {

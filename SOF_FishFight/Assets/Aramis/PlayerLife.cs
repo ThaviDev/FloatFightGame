@@ -4,17 +4,14 @@ public class PlayerLife : MonoBehaviour
 {
     public string nombreJugador;
     public int playerID;
-    public int vidas = 3;
+    public C_Jugador jugador;
 
-    private bool eliminado = false;
-
-    public void PerderVida()
+    public void Update()
     {
-        vidas--;
 
-        if (vidas <= 0 && !eliminado)
+        if (jugador.Lives <= 0 && !jugador.defeated)
         {
-            eliminado = true;
+            jugador.defeated = true;
             GameManager.Instance.JugadorEliminado(this);
         }
     }

@@ -7,7 +7,7 @@ public class AsignarNombres : MonoBehaviour
     public string nombre3;
     public string nombre4;
 
-    void Start()
+    void Update()
     {
         //PlayerLife[] jugadores = FindObjectsOfType<PlayerLife>();
         PlayerLife[] jugadores = FindObjectsByType<PlayerLife>(FindObjectsSortMode.None);

@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
             PlayerLife pl = clon.GetComponent<PlayerLife>();
 
             pl.playerID = i;
-            pl.nombreJugador = nombres[i]; // 🔥 AQUÍ es donde debe hacerse
+            pl.nombreJugador = nombres[i]; // AQUÍ es donde se deben nombrar a los jugadores
 
             jugadores.Add(pl);
         }
@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour
 
         foreach (var j in jugadores)
         {
-            if (j.vidas > 0)
+            if (j.jugador.Lives > 0)
             {
                 vivos++;
                 ultimo = j;
@@ -80,7 +80,7 @@ public class GameManager : MonoBehaviour
                 ranking.Add(ultimo.nombreJugador);
             }
 
-            SceneManager.LoadScene("Resultados");
+            SceneManager.LoadScene("Scores");
         }
     }
 }
