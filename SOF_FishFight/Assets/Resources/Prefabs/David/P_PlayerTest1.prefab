@@ -126,6 +126,7 @@ GameObject:
   - component: {fileID: 4359103763860005016}
   - component: {fileID: 5577695014056169536}
   - component: {fileID: 9030670640148623457}
+  - component: {fileID: 202078977821823740}
   m_Layer: 6
   m_Name: P_PlayerTest1
   m_TagString: Untagged
@@ -212,6 +213,7 @@ MonoBehaviour:
   m_MaxHealth: 100
   m_RespawnDuration: 2
   m_RespawnPoint: {fileID: 0}
+  m_CanControl: 0
 --- !u!54 &9030670640148623457
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -239,3 +241,17 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!114 &202078977821823740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6134696750558419336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3fc11b44b988d44db61aa6201a1c2f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerLife
+  nombreJugador: 
+  vidas: 3
