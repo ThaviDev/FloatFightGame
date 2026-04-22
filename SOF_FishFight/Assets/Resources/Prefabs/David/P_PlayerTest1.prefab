@@ -206,12 +206,13 @@ MonoBehaviour:
   m_AtkFastDamage: 1
   m_AtkFastRange: 1
   m_AtkFastSetCooldown: 0.4
-  m_AtkStrongDamage: 12
+  m_AtkStrongDamage: 18
   m_AtkStrongRange: 2.2
-  m_AtkStrongSetCooldown: 4
+  m_AtkStrongSetCooldown: 8
   m_MaxHealth: 100
   m_RespawnDuration: 2
   m_RespawnPoint: {fileID: 0}
+  m_CanControl: 0
 --- !u!54 &9030670640148623457
 Rigidbody:
   m_ObjectHideFlags: 0
