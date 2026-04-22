@@ -239,7 +239,10 @@ public class C_Jugador : MonoBehaviour
         if (collision.CompareTag("Game Area"))
         {
             m_CanControl = true;
-            // Lógica para cuando colisiona con otro jugador
+        }
+        if (collision.CompareTag("Hazard"))
+        {
+            RecieveDamage(m_MaxHealth); // Recibe daño letal al entrar en una zona de peligro
         }
     }
 
@@ -248,7 +251,6 @@ public class C_Jugador : MonoBehaviour
         if (collision.CompareTag("Game Area"))
         {
             m_CanControl = false;
-            // Lógica para cuando colisiona con otro jugador
         }
         //print("Salí de la colision con " + collision.gameObject.name);
     }
