@@ -16,6 +16,8 @@ public class GameManager : MonoBehaviour
     private List<PlayerLife> jugadores = new List<PlayerLife>();
     public List<string> ranking = new List<string>();
 
+    int contador = 0;
+
     private void Awake()
     {
         if (Instance == null)
@@ -31,6 +33,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        contador = 3;
         SpawnJugadores();
     }
 
@@ -51,15 +54,18 @@ public class GameManager : MonoBehaviour
 
     public void JugadorEliminado(PlayerLife jugador)
     {
+        contador --;
         if (!ranking.Contains(jugador.nombreJugador))
         {
             ranking.Add(jugador.nombreJugador);
         }
-
-        VerificarFin();
+        if (contador <= 0)
+        {
+            VerificarFin(jugador);
+        }
     }
 
-    void VerificarFin()
+    void VerificarFin(PlayerLife ultimoJugador)
     {
         int vivos = 0;
         PlayerLife ultimo = null;
@@ -73,12 +79,12 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (vivos == 1)
+        if (vivos <= 1)
         {
-            if (!ranking.Contains(ultimo.nombreJugador))
+            /*if (!ranking.Contains(ultimo.nombreJugador))
             {
                 ranking.Add(ultimo.nombreJugador);
-            }
+            }*/
 
             SceneManager.LoadScene("Scores");
         }
