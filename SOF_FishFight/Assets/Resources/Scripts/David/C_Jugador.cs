@@ -1,8 +1,5 @@
-using System;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.TextCore.Text;
 
 public class C_Jugador : MonoBehaviour
 {
@@ -46,6 +43,7 @@ public class C_Jugador : MonoBehaviour
 
     [Header("Health Settings")]
     [SerializeField] float m_MaxHealth = 20f;
+    public float MaxHealth { get { return m_MaxHealth; } }
     private float m_CurrentHealth;
     // IVONNE!, accede a la vida actual con CurrentHealth
     public float CurrentHealth { get { return m_CurrentHealth; } }
@@ -56,7 +54,7 @@ public class C_Jugador : MonoBehaviour
     [SerializeField] float m_RespawnDuration = 2f;
     float m_CurrentRespawnTime = 0;
     [SerializeField] Transform m_RespawnPoint;
-    private bool m_CanControl;
+    [SerializeField] private bool m_CanControl;
     public bool CanControl { get { return m_CanControl; } set { m_CanControl = value; } }
 
     private void Awake()
@@ -66,6 +64,8 @@ public class C_Jugador : MonoBehaviour
 
     private void OnEnable()
     {
+        m_RespawnPoint = FindAnyObjectByType<RespawnPoint>().transform;
+        transform.position = m_RespawnPoint.position;
         m_MoveInput = m_PlayerInput.actions["Move"];
         m_GoUpInput = m_PlayerInput.actions["GoUp"];
         m_GoDownInput = m_PlayerInput.actions["GoDown"];
@@ -80,16 +80,15 @@ public class C_Jugador : MonoBehaviour
     }
     void Start()
     {
-
-        m_CanControl = false;
+        m_CanControl = true;
         m_CurrentHealth = m_MaxHealth;
         m_Visual = this.gameObject.transform.GetChild(0).gameObject;
         m_rb = GetComponent<Rigidbody>();
-        m_RespawnPoint = FindAnyObjectByType<RespawnPoint>().transform;
         if (m_PlayerLayerMask == 0)
         {
             m_PlayerLayerMask = LayerMask.GetMask("Player");
         }
+        ChangeCharacter();
     }
 
     void Update()
@@ -104,6 +103,7 @@ public class C_Jugador : MonoBehaviour
         }
         if (!m_CanControl)
         {
+            m_MoveDir = Vector3.zero;
             return;
         }
         Vector2 m_HorMovement = m_MoveInput.ReadValue<Vector2>();
@@ -113,6 +113,14 @@ public class C_Jugador : MonoBehaviour
         float m_VertMovement = m_GoUpInput.ReadValue<float>() - m_GoDownInput.ReadValue<float>();
         //print("MovimientoVertical" + m_VertMovement);
         //m_MoveDir = m_MoveInput.ReadValue<Vector2>();
+
+        if (Gamepad.current != null)
+        {
+            m_HorMovement.y *= -1; // Invertir el eje Y para gamepad
+        }
+        //Quaternion isRotation = Quaternion.Euler(0, -45f, 0);
+        //m_HorMovement = isRotation * m_HorMovement; // Rotar el movimiento horizontal 90 grados
+
         m_MoveDir = new Vector3(m_HorMovement.x, m_VertMovement, m_HorMovement.y);
 
         if (m_AtkFastInput.ReadValue<float>() > 0)
@@ -135,30 +143,41 @@ public class C_Jugador : MonoBehaviour
     }
 
     // ACCEDAN A ESTA FUNCION PARA CAMBIO DE PERSONAJE
+
     public void ChangeCharacter()
     {
         int characterID;
+
         if (m_PlayerInput.playerIndex == 0)
         {
+            print ("Accedo a mi personaje 1");
             characterID = FindAnyObjectByType<C_SetCharacters>().m_p1.CharacterID;
+            FindAnyObjectByType<C_BattleUIManager>().SetPlayer1UI(this);
         }
-        if (m_PlayerInput.playerIndex == 1)
+        else if (m_PlayerInput.playerIndex == 1)
         {
+            print ("Accedo a mi personaje 2");
             characterID = FindAnyObjectByType<C_SetCharacters>().m_p2.CharacterID;
+            FindAnyObjectByType<C_BattleUIManager>().SetPlayer2UI(this);
         }
-        if (m_PlayerInput.playerIndex == 2)
+        else if (m_PlayerInput.playerIndex == 2)
         {
+            print ("Accedo a mi personaje 3");
             characterID = FindAnyObjectByType<C_SetCharacters>().m_p3.CharacterID;
+            FindAnyObjectByType<C_BattleUIManager>().SetPlayer3UI(this);
         }
-        if (m_PlayerInput.playerIndex == 3)
+        else if (m_PlayerInput.playerIndex == 3)
         {
+            print ("Accedo a mi personaje 4");
             characterID = FindAnyObjectByType<C_SetCharacters>().m_p4.CharacterID;
+            FindAnyObjectByType<C_BattleUIManager>().SetPlayer4UI(this);
         }
         else
         {
             characterID = 0; // Valor por defecto o error
         }
         //ARAMIS: Efecto de cambio de personaje (Pantalla de seleccion de personaje)
+        print ("Cambio de material " + characterID);
         m_Visual.GetComponent<Renderer>().material = m_CharacterMaterial[characterID];
     }
     private void FastAttack()
@@ -214,9 +233,29 @@ public class C_Jugador : MonoBehaviour
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position + m_ColOffset, m_AtkStrongRange);
     }
+    private void OnTriggerEnter(Collider collision)
+    {
+        //print("Colisione con " + collision.gameObject.name);
+        if (collision.CompareTag("Game Area"))
+        {
+            m_CanControl = true;
+            // Lógica para cuando colisiona con otro jugador
+        }
+    }
+
+    private void OnTriggerExit(Collider collision)
+    {
+        if (collision.CompareTag("Game Area"))
+        {
+            m_CanControl = false;
+            // Lógica para cuando colisiona con otro jugador
+        }
+        //print("Salí de la colision con " + collision.gameObject.name);
+    }
 
     public void RecieveDamage(float damage)
     {
+        print("Recibi danio");
         //ARAMIS: Efecto de recibir danio
         m_CurrentHealth -= damage;
         if (m_CurrentHealth <= 0)
@@ -230,7 +269,7 @@ public class C_Jugador : MonoBehaviour
         m_Lives -= 1;
         m_CurrentHealth = m_MaxHealth;
         m_Visual.SetActive(false);
-        m_CanControl = true;
+        m_CanControl = false;
         print("Player Died! Lives left: " + m_Lives);
         if (m_Lives > 0)
         {
@@ -241,7 +280,7 @@ public class C_Jugador : MonoBehaviour
     {
         //ARAMIS: Efecto de respawn
         print("Player Respawned!");
-        m_CanControl = false;
+        m_CanControl = true;
         transform.position = m_RespawnPoint.position;
         m_Visual.SetActive(true);
     }
@@ -252,6 +291,8 @@ public class C_Jugador : MonoBehaviour
 
     private void MovimientoFisico()
     {
+        if (!m_CanControl)
+            return;
         if (m_MoveDir != Vector3.zero)
         {
             m_rb.AddForce(m_MoveDir * m_MoveAccel, ForceMode.Force);

@@ -14,6 +14,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Patrick/Scenes/Gameplay.unity
     guid: 8da64e72459e62d4fac58fc1954ae107
+  - enabled: 1
+    path: Assets/Scenes/MultiplayerTest.unity
+    guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/BattleScene.unity
+    guid: 9b04eb58e3fd05e41bc0ce2dba267c2e
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

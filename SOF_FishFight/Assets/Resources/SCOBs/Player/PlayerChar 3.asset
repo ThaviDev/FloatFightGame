@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 45b28808543dd54448b47008a7197291, type: 3}
-  m_Name: PlayerChar 2
+  m_Name: PlayerChar 3
   m_EditorClassIdentifier: Assembly-CSharp::CharacterSelectSCOB
-  PlayerSlot: 0
-  CharacterID: 0
+  PlayerSlot: 2
+  CharacterID: 2
